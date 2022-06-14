@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"> <!-- bean definitions here -->
+
+	<context:component-scan
+		base-package="com.xworkz.di" />
+
+	<bean id="encryptorConfig"
+		class="org.jasypt.encryption.pbe.config.SimpleStringPBEConfig">
+		<property name="algorithm" value="PBEWithMD5AndDES" />
+		<property name="password" value="jasypt" />
+		<property name="poolSize" value="1" />
+		<property name="providerName" value="SunJCE" />
+		<property name="saltGeneratorClassName"
+			value="org.jasypt.salt.RandomSaltGenerator" />
+	</bean>
+
+
+	<bean id="configurationEncryptor"
+		class="org.jasypt.encryption.pbe.PooledPBEStringEncryptor">
+		<property name="config" ref="encryptorConfig" />
+	</bean>
+
+	<bean id="propertyConfigurer"
+		class="org.jasypt.spring4.properties.EncryptablePropertyPlaceholderConfigurer">
+		<constructor-arg ref="configurationEncryptor" />
+		<property name="locations">
+			<list>
+				<value>/WEB-INF/application.properties</value>
+			</list>
+		</property>
+
+	</bean>
+
+
+</beans>
